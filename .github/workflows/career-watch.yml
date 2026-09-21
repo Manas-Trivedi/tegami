@@ -1,0 +1,84 @@
+name: career-watch
+
+# Monitors career pages in career_pages.csv and opens a GitHub issue when new
+# postings appear. Runs every 12 hours; also runnable manually.
+#
+# Cadence is a billing constraint, not a preference. A run renders JS for every
+# career page and takes ~21 min, and this is a private repo, so it draws on the
+# account's 2,000 free Actions minutes/month. At 4x/day it cost ~2,520 min and
+# exhausted the whole account allowance mid-July, which stopped OTHER repos'
+# workflows (pr-scheduler) from starting at all. 2x/day is ~1,260 min/month and
+# leaves room for them. Do not raise this without checking the minutes budget.
+
+on:
+  schedule:
+    - cron: "0 */12 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write   # commit updated career_state.json
+  issues: write     # open alert issues
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    # A normal run is ~21 min. This caps a hung scrape (an unresponsive career
+    # portal, a Playwright wait that never resolves) at 40 min instead of
+    # letting it sit for the default 6 hours and eat the monthly allowance.
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install deps
+        run: |
+          pip install requests playwright
+          playwright install --with-deps chromium
+
+      - name: Run career watcher
+        env:
+          RENDER: "1"   # render JS so SPA/MNC career portals yield listings
+          # Optional email alert — set these as repo secrets to enable.
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          ALERT_TO: ${{ secrets.ALERT_TO }}
+        run: python scripts/career_watch.py
+
+      - name: Open issue on new entries
+        if: success()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OWNER: ${{ github.repository_owner }}
+        run: |
+          if [ -s state/career_alerts.md ]; then
+            title="🔔 New career-page postings — $(date -u +%Y-%m-%d\ %H:%M\ UTC)"
+            if [ "$(gh api repos/${{ github.repository }} --jq '.has_issues')" != "true" ]; then
+              echo "::warning::Repository issues are disabled — skipping issue creation."
+            else
+              # Assign to the repo owner so GitHub emails them automatically.
+              gh issue create --title "$title" --body-file state/career_alerts.md \
+                --assignee "$OWNER" --label career-alert \
+              || gh issue create --title "$title" --body-file state/career_alerts.md \
+                --assignee "$OWNER"
+            fi
+          else
+            echo "No new entries — no issue created."
+          fi
+        # $OWNER resolves to the account that owns the repo (you).
+
+      - name: Commit updated state
+        run: |
+          git config user.name "career-watch[bot]"
+          git config user.email "actions@github.com"
+          git add state/career_state.json state/career_alerts.log 2>/dev/null || true
+          if ! git diff --cached --quiet; then
+            git commit -m "career-watch: update state [skip ci]"
+            git push
+          else
+            echo "No state changes to commit."
+          fi

@@ -1,0 +1,8 @@
+
+# mailer local files (never commit real creds, logs, resume, or recipient lists)
+.venv
+__pycache__
+mailer/.env
+mailer/sent_log.csv
+mailer/resume.pdf
+mailer/recipients*.csv

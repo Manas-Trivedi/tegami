@@ -1,0 +1,75 @@
+name: Autonomous Daily PR Scheduler
+
+# Runs completely on GitHub's Cloud Servers (no open laptop required)
+# Automatically checks, generates new city outreach batches, and submits PRs daily.
+
+on:
+  schedule:
+    # Runs every day at 04:30 UTC (10:00 AM IST)
+    - cron: "30 4 * * *"
+  workflow_dispatch: # Allows manual trigger from GitHub web UI
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  auto-submit-pr:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install black requests
+
+      - name: Generate next city outreach batch
+        id: batch_gen
+        run: |
+          # Regenerate the city batches from the master email list. The batch
+          # scripts moved under scripts/ in the industry/research restructure.
+          if [ -f add_aurangabad_batch.py ]; then
+            python add_aurangabad_batch.py
+          fi
+          if [ -f add_nashik_batch.py ]; then
+            python add_nashik_batch.py
+          fi
+          python scripts/gen_city_batches.py
+
+      - name: Commit and push changes if any
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name "eeshsaxena"
+          git config user.email "eeshsaxena@gmail.com"
+
+          STATUS=$(git status --porcelain)
+          if [ -z "$STATUS" ]; then
+            echo "No new changes to submit."
+            exit 0
+          fi
+
+          BRANCH_NAME="data/daily-city-batch-$(date +'%Y%m%d')"
+          git checkout -b "$BRANCH_NAME" || git checkout "$BRANCH_NAME"
+          git add .
+          git commit -m "data(batch): daily city outreach email batch update for $(date +'%Y-%m-%d')"
+          git push origin "$BRANCH_NAME" --force
+
+          # Open Pull Request against upstream
+          gh pr create \
+            --repo eeshsaxena/outreach-emails \
+            --base master \
+            --head "${BRANCH_NAME}" \
+            --title "data(batch): daily city outreach email batch update for $(date +'%Y-%m-%d')" \
+            --body "Automated daily outreach emails update for verified IT companies and academic institutions. Validated and deduplicated according to CONTRIBUTING.md guidelines." || echo "PR already open or created."

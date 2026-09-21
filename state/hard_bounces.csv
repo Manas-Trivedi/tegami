@@ -1,0 +1,42 @@
+email,reason,detected_at
+info@bicommunications.ae,hard bounce,2026-09-05
+hi@synergylabs.co,hard bounce,2026-09-05
+hello@7edge.com,hard bounce,2026-09-05
+info@webdew.com,hard bounce,2026-09-05
+hello@intelivita.com,hard bounce,2026-09-05
+hello@goodcoresoft.com,hard bounce,2026-09-05
+info@bacancytechnology.com,550 5.1.1 NoSuchUser,2026-09-05
+hello@solulab.com,550 5.1.1 NoSuchUser,2026-09-05
+contact@openxcell.com,550 5.1.1 NoSuchUser,2026-09-05
+bd@zealousys.com,550 5.1.1 NoSuchUser,2026-09-05
+hello@techuz.com,5.1.1,2026-09-05T16:38:23.987985+00:00
+hello@ajaronline.com,5.1.1,2026-09-05T16:38:23.987985+00:00
+info@saffrontech.net,5.1.1,2026-09-05T17:20:20.562352+00:00
+hello@sdlccorp.com,5.1.1,2026-09-05T17:20:21.092148+00:00
+hello@codapayments.com,5.1.1,2026-09-05T17:37:51.435784+00:00
+hello@workruit.com,5.1.1,2026-09-05T17:37:52.052430+00:00
+hello@elmenus.com,5.1.1,2026-09-05T17:37:53.230073+00:00
+hello@qashio.com,5.1.1,2026-09-05T17:37:54.423354+00:00
+info@alef.ae,5.1.1,2026-09-05T17:37:55.951154+00:00
+info@seotechexperts.ae,5.1.1,2026-09-06T05:48:52.458305+00:00
+info@quixta.com,5.1.1,2026-09-06T05:48:53.004292+00:00
+info@theglimpseproject.com,5.1.1,2026-09-06T05:48:53.566700+00:00
+info@quickwork.co,5.1.1,2026-09-06T05:48:55.118236+00:00
+suhas@simpleenergy.in,5.1.1,2026-09-13T09:36:02.782024+00:00
+rajul@increff.com,5.1.1,2026-09-13T09:36:04.444786+00:00
+krunal@thirdrocktechkno.com,5.1.1,2026-09-13T09:36:06.189821+00:00
+lalchand@kukufm.com,5.1.1,2026-09-15T08:44:54.694522+00:00
+info@eatfit.in,5.1.1,2026-09-15T08:44:55.145684+00:00
+varun@supertails.com,5.1.1,2026-09-15T08:44:56.133185+00:00
+arvind@reverieinc.com,5.1.1,2026-09-15T08:44:56.671696+00:00
+nagendra@qpiai.tech,5.1.1,2026-09-15T08:44:57.153120+00:00
+sameer@newspace.co.in,5.1.1,2026-09-15T08:44:58.229872+00:00
+anuj@livspace.com,5.1.1,2026-09-15T08:44:58.733315+00:00
+srikanth@devic-earth.com,5.1.1,2026-09-16T08:32:49.618557+00:00
+zoha.shariff@careem.com,5.1.1,2026-09-16T08:32:50.694692+00:00
+ben.wilson@propertyfinder.ae,5.1.1,2026-09-16T08:32:52.064902+00:00
+niharika.gupta@ge.com,5.1.1,2026-09-17T07:09:12.601237+00:00
+kundan.kumar@freecharge.com,5.1.1,2026-09-17T07:09:15.400540+00:00
+anthonysanthosh@gmail.com,5.1.1,2026-09-17T07:09:15.870874+00:00
+tejays@webserver.tejays.in,5.1.1,2026-09-19T07:08:39.420952+00:00
+riya.goyal@eventbrite.com,5.1.1,2026-09-19T07:08:48.787786+00:00
