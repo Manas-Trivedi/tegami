@@ -1,4 +1,3 @@
-
 # mailer local files (never commit real creds, logs, resume, or recipient lists)
 .venv
 __pycache__
